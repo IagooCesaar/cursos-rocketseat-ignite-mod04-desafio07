@@ -1,6 +1,8 @@
 import request from 'supertest'
+import { v4 as uuidv4 } from 'uuid'
 import { Connection, createConnection } from 'typeorm'
 import { app } from '../../../../app';
+
 
 let connection: Connection;
 
@@ -21,7 +23,7 @@ interface IResponseToken {
 
 let responseToken: IResponseToken;
 
-describe("CreateStatementController", () => {
+describe("GetStatementOperationController", () => {
   beforeAll(async () => {
     connection = await createConnection()
     await connection.runMigrations()
@@ -40,48 +42,35 @@ describe("CreateStatementController", () => {
     await connection.close();
   })
 
-  it("Should be to create a new deposit for a user",  async () => {
+  it("Should be to get a statement data by Id",  async () => {
 
     const { token } = responseToken;
 
-    const response = await request(app).post("/api/v1/statements/deposit").send({
+    const responseDeposit = await request(app).post("/api/v1/statements/deposit").send({
       amount: 100,
       description: 'test deposit'
     }).set({
       Authorization: `Bearer ${token}`
     })
 
-    expect(response.status).toBe(201)
-    expect(response.body).toHaveProperty('id')
-  })
-
-  it("Should be to create a new withdraw for a user",  async () => {
-
-    const { token } = responseToken;
-
-    const response = await request(app).post('/api/v1/statements/withdraw').send({
-      amount: 10,
-      description: 'test withdraw'
-    }).set({
+    const response = await request(app).get(`/api/v1/statements/${responseDeposit.body.id as string}`).set({
       Authorization: `Bearer ${token}`
     })
 
-    expect(response.status).toBe(201)
+    expect(response.status).toBe(200)
     expect(response.body).toHaveProperty('id')
   })
 
-  it("Should not be to create a new withdraw for a user with insufficient funds",  async () => {
+  it("Should not be to get a statement data with invalid Id",  async () => {
 
     const { token } = responseToken;
+    const fakeId = uuidv4()
 
-    const response = await request(app).post('/api/v1/statements/withdraw').send({
-      amount: 100,
-      description: 'test withdraw'
-    }).set({
+    const response = await request(app).get(`/api/v1/statements/${fakeId}`).set({
       Authorization: `Bearer ${token}`
     })
 
-    expect(response.status).toBe(400)
+    expect(response.status).toBe(404)
     expect(response.body).toHaveProperty('message')
   })
 })
