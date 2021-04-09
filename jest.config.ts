@@ -4,7 +4,6 @@
 
 import dotenv from 'dotenv'
 const result = dotenv.config({ path: '.env'})
-console.log(result.error)
 
 export default {
   // All imported modules in your tests should be mocked automatically
