@@ -3,11 +3,16 @@ import 'express-async-errors';
 
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv'
+import path from 'path'
 
 import './database';
 import './shared/container';
 import { router } from './routes';
 import { AppError } from './shared/errors/AppError';
+
+const result = dotenv.config({ path: path.resolve(__dirname, '..','.env')})
+console.log(result.error)
 
 const app = express();
 
