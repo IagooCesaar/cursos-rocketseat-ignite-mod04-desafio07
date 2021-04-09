@@ -6,7 +6,7 @@ let connection: Connection;
 
 const mockUser = {
   name: "Test",
-  email: "test@test.com",
+  email: "test2@test.com",
   password: '1234'
 }
 
