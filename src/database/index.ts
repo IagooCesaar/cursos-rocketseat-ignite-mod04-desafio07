@@ -5,7 +5,7 @@ export default async (host = 'challange07_fin_api'): Promise<Connection> => {
 
   return createConnection(
     Object.assign(defaultOptions, {
-      host
+      host: process.env.NODE_ENV === 'test' ? 'localhost' : host
     })
   )
 }

@@ -14,7 +14,6 @@ import { AppError } from './shared/errors/AppError';
 createConnection();
 
 const result = dotenv.config({ path: path.resolve(__dirname, '..','.env')})
-console.log(result.error)
 
 const app = express();
 
