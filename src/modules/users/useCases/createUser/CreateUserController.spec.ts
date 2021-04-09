@@ -1,8 +1,6 @@
 import request from 'supertest'
 import { Connection, createConnection } from 'typeorm'
 import { app } from '../../../../app';
-import { CreateUserError } from './CreateUserError';
-
 
 let connection: Connection;
 
@@ -38,7 +36,7 @@ describe("CreateUserController", () => {
       email: "test@test.com",
       password: '1234'
     })
-    console.log(response.body)
+
     expect(response.status).toBe(400)
     expect(response.body).toHaveProperty("message")
   })
