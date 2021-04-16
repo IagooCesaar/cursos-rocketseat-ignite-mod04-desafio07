@@ -2,7 +2,6 @@ import { inject, injectable } from "tsyringe";
 import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
 import { OperationType } from "../../entities/Statement";
 import { IStatementsRepository } from "../../repositories/IStatementsRepository";
-import { ITransfersRepository } from "../../repositories/ITransfersRepository";
 import { MakeTransferenceError } from "./MakeTransferenceError";
 
 interface IRequest {
@@ -16,9 +15,6 @@ interface IRequest {
 class MakeTransferenceUseCase {
 
   constructor(
-    @inject("TransfersRepository")
-    private transfersRepository: ITransfersRepository,
-
     @inject("StatementsRepository")
     private statementsRepository: IStatementsRepository,
 
@@ -56,10 +52,10 @@ class MakeTransferenceUseCase {
       user_id: sender_id
     })
 
-    await this.transfersRepository.create(
-      String(statement_out.id),
-      String(statement_in.id)
-    )
+    // await this.transfersRepository.create(
+    //   String(statement_out.id),
+    //   String(statement_in.id)
+    // )
   }
 }
 

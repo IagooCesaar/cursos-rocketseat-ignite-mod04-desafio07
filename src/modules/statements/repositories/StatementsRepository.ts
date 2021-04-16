@@ -43,8 +43,10 @@ export class StatementsRepository implements IStatementsRepository {
     const statement = await this.repository.find({
       where: { user_id },
       relations: [
-        'transferIn',
-        'transferOut'
+        'transferOut', 'transferOut.statementIn',
+        // 'transferOut.statementOut',
+        'transferIn',  'transferIn.statementOut',
+        // 'transferIn.statementIn',
       ]
     });
 
