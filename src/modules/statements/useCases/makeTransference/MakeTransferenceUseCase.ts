@@ -1,6 +1,18 @@
+interface IRequest {
+  sender_id: string;
+  receiver_id: string;
+  amount: Number;
+  description: string;
+}
+
 class MakeTransferenceUseCase {
 
-  async execute(): Promise<void> {
+  async execute({
+    sender_id,
+    receiver_id,
+    amount,
+    description
+  }: IRequest): Promise<void> {
 
   }
 }
