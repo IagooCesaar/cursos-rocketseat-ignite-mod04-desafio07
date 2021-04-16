@@ -7,13 +7,13 @@ export class CreateTransfers1618585301809 implements MigrationInterface {
       new Table({
         name: "transfers",
         columns: [
-          { name: "statement_out", type: "uuid", isPrimary: true},
-          { name: "statement_in", type: "uuid", isPrimary: true}
+          { name: "statement_out_id", type: "uuid", isPrimary: true},
+          { name: "statement_in_id", type: "uuid", isPrimary: true}
         ],
         foreignKeys: [
           {
             name: 'FKTransfers_StatementOut',
-            columnNames: ['statement_out'],
+            columnNames: ['statement_out_id'],
             referencedTableName: 'statements',
             referencedColumnNames: ['id'],
             onUpdate: 'CASCADE',
@@ -21,7 +21,7 @@ export class CreateTransfers1618585301809 implements MigrationInterface {
           },
           {
             name: 'FKTransfers_StatementIn',
-            columnNames: ['statement_in'],
+            columnNames: ['statement_in_id'],
             referencedTableName: 'statements',
             referencedColumnNames: ['id'],
             onUpdate: 'CASCADE',
