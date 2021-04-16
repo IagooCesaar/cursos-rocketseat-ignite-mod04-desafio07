@@ -13,6 +13,18 @@ export class StatementsRepository implements IStatementsRepository {
     this.repository = getRepository(Statement);
   }
 
+  async setTransferId(id: string, transfer_id: string): Promise<void> {
+    await this.repository
+      .createQueryBuilder()
+      .update()
+      .set({
+        transfer_id
+      })
+      .where("id = :id")
+      .setParameters({ id })
+      .execute();
+  }
+
   async create({
     user_id,
     amount,
@@ -29,7 +41,10 @@ export class StatementsRepository implements IStatementsRepository {
     return this.repository.save(statement);
   }
 
-  async findStatementOperation({ statement_id, user_id }: IGetStatementOperationDTO): Promise<Statement | undefined> {
+  async findStatementOperation({
+    statement_id,
+    user_id
+  }: IGetStatementOperationDTO): Promise<Statement | undefined> {
     return this.repository.findOne(statement_id, {
       where: { user_id }
     });
@@ -42,7 +57,7 @@ export class StatementsRepository implements IStatementsRepository {
   {
     const statement = await this.repository.find({
       where: { user_id },
-      // relations: [ ]
+      relations: [ "transfer" ]
     });
 
     const balance = statement.reduce((acc, operation) => {
@@ -50,9 +65,9 @@ export class StatementsRepository implements IStatementsRepository {
         operation.type === 'deposit' ||
         operation.type === 'transfer_in'
       ) {
-        return acc + operation.amount;
+        return acc + Number(operation.amount);
       } else {
-        return acc - operation.amount;
+        return acc - Number(operation.amount);
       }
     }, 0)
 

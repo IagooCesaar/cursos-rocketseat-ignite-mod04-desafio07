@@ -3,7 +3,6 @@ import { Statement } from "../entities/Statement";
 
 export class BalanceMap {
   static toDTO({statement, balance}: { statement: Statement[], balance: number}) {
-    console.log('received data', statement)
 
     const parsedStatement = statement.map(({
       id,
@@ -12,6 +11,7 @@ export class BalanceMap {
       type,
       created_at,
       updated_at,
+      transfer
     }) => {
       const statementView = {
         id,
@@ -22,19 +22,18 @@ export class BalanceMap {
         updated_at
       }
 
-      // if(type==='transfer_in') console.log(transferIn, transferOut)
-
-      // if(type==='transfer_in' && transferIn) {
-      //   Object.assign(statementView, {
-      //     sender_id: transferIn.statementOut.user_id
-      //   })
-      // }
-
-      // if(type==='transfer_out' && transferOut) {
-      //   Object.assign(statementView, {
-      //     receiver_id: transferOut.statementIn.user_id
-      //   })
-      // }
+      if(transfer){
+        if(type==='transfer_in') {
+          Object.assign(statementView, {
+            sender_id: transfer.user_id
+          })
+        }
+        if(type==='transfer_out') {
+          Object.assign(statementView, {
+            receiver_id: transfer.user_id
+          })
+        }
+      }
 
       return statementView;
     });

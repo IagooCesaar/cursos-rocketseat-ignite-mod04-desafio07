@@ -41,6 +41,13 @@ export class Statement {
   @Column({ type: 'enum', enum: OperationType })
   type: OperationType;
 
+  @Column('uuid')
+  transfer_id?: string;
+
+  @OneToOne(() => Statement, statement => statement.id)
+  @JoinColumn({ name: "transfer_id"})
+  transfer: Statement;
+
   @CreateDateColumn()
   created_at: Date;
 

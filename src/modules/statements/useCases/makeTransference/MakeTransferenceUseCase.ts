@@ -52,10 +52,15 @@ class MakeTransferenceUseCase {
       user_id: sender_id
     })
 
-    // await this.transfersRepository.create(
-    //   String(statement_out.id),
-    //   String(statement_in.id)
-    // )
+    await this.statementsRepository.setTransferId(
+      String(statement_in.id),
+      String(statement_out.id)
+    );
+
+    await this.statementsRepository.setTransferId(
+      String(statement_out.id),
+      String(statement_in.id)
+    );
   }
 }
 
