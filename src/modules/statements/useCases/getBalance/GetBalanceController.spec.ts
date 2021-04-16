@@ -65,12 +65,12 @@ describe("GetBalanceController", () => {
     expect(response.status).toBe(200)
     expect(response.body).toHaveProperty('statement')
     expect(response.body.statement).toHaveLength(2)
-  })
+  }, 30000)
 
   it("Should not be able to get all statements for a unauthenticated user",  async () => {
     const response = await request(app).get('/api/v1/statements/balance')
 
     expect(response.status).toBe(401)
     expect(response.body).toHaveProperty('message')
-  })
+  }, 30000)
 })

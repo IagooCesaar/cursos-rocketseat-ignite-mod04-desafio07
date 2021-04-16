@@ -32,7 +32,7 @@ describe("AuthenticateUserController", () => {
     // console.log(response.body)
     expect(response.status).toBe(200)
     expect(response.body).toHaveProperty('token')
-  })
+  }, 30000)
 
   it("Should not be able to create a session for an inexistent user",  async () => {
     const response = await request(app).post('/api/v1/sessions').send({
@@ -43,7 +43,7 @@ describe("AuthenticateUserController", () => {
     // console.log(response.body)
     expect(response.status).toBe(401)
     expect(response.body).toHaveProperty('message')
-  })
+  }, 30000)
 
   it("Should not be able to create a session for a user with invalid password",  async () => {
     const response = await request(app).post('/api/v1/sessions').send({
@@ -54,5 +54,5 @@ describe("AuthenticateUserController", () => {
     // console.log(response.body)
     expect(response.status).toBe(401)
     expect(response.body).toHaveProperty('message')
-  })
+  }, 30000)
 })
