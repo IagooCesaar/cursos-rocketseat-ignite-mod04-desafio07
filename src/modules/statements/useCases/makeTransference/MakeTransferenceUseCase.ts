@@ -28,6 +28,10 @@ class MakeTransferenceUseCase {
     amount,
     description,
   }: IRequest): Promise<void> {
+    if (sender_id === receiver_id) {
+      throw new MakeTransferenceError.SendEqualsToReceiver();
+    }
+
     const receiver = await this.usersRepository.findById(receiver_id);
     if (!receiver) {
       throw new MakeTransferenceError.ReceiverNotFound();

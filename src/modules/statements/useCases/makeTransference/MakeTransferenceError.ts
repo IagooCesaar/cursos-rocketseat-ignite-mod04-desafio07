@@ -14,4 +14,10 @@ export namespace MakeTransferenceError {
       super("Insufficient funds");
     }
   }
+
+  export class SendEqualsToReceiver extends AppError {
+    constructor() {
+      super("Operation invalid");
+    }
+  }
 }
