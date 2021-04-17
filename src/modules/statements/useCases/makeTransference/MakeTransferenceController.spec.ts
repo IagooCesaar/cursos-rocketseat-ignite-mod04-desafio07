@@ -1,5 +1,6 @@
 import request from "supertest";
 import { Connection, createConnection } from "typeorm";
+import { v4 as uuidV4 } from "uuid";
 
 import { app } from "../../../../app";
 import { User } from "../../../users/entities/User";
@@ -142,6 +143,51 @@ describe("MakeTransferenceController", () => {
 
     const error = new MakeTransferenceError.SenderEqualsToReceiver();
 
+    expect(result.status).toEqual(error.statusCode);
+    expect(result.body).toHaveProperty("message");
+    expect(result.body.message).toEqual(error.message);
+  });
+
+  it("Should not be able to make a transference when have insufficient funds", async () => {
+    const { token } = responseToken;
+    const amount = 2000;
+
+    const result = await request(app)
+      .post(`/api/v1/statements/transfers/${mockUser2.id}`)
+      .send({
+        amount,
+        description: "Test",
+      })
+      .set({
+        Authorization: `Bearer ${token}`,
+      });
+
+    const error = new MakeTransferenceError.InsufficientFunds();
+
+    expect(result.status).toEqual(error.statusCode);
+    expect(result.body).toHaveProperty("message");
+    expect(result.body.message).toEqual(error.message);
+  });
+
+  it("Should not be able to make a transference to inexistent user", async () => {
+    const { token } = responseToken;
+    const amount = 1;
+
+    const fakeId = uuidV4();
+
+    const result = await request(app)
+      .post(`/api/v1/statements/transfers/${fakeId}`)
+      .send({
+        amount,
+        description: "Test",
+      })
+      .set({
+        Authorization: `Bearer ${token}`,
+      });
+
+    const error = new MakeTransferenceError.ReceiverNotFound();
+
+    expect(result.status).toEqual(error.statusCode);
     expect(result.body).toHaveProperty("message");
     expect(result.body.message).toEqual(error.message);
   });
