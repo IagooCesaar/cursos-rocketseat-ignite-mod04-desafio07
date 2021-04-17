@@ -4,10 +4,12 @@ import { Connection, createConnection } from "typeorm";
 import { app } from "../../../../app";
 import { User } from "../../../users/entities/User";
 import { Statement } from "../../entities/Statement";
+import { MakeTransferenceError } from "./MakeTransferenceError";
 
 let connection: Connection;
 
 const mockUser1 = {
+  id: "",
   name: "Fred Ortiz",
   email: "fred.ortiz@jepso.ki",
   password: "123",
@@ -42,6 +44,7 @@ describe("MakeTransferenceController", () => {
     await connection.runMigrations();
 
     await request(app).post("/api/v1/users").send(mockUser1);
+    await request(app).post("/api/v1/users").send(mockUser2);
 
     const response = await request(app).post("/api/v1/sessions").send({
       email: mockUser1.email,
@@ -49,12 +52,20 @@ describe("MakeTransferenceController", () => {
     });
     responseToken = response.body;
 
-    await request(app).post("/api/v1/users").send(mockUser2);
+    const { token } = responseToken;
+
+    const resultProfile = await request(app)
+      .get("/api/v1/profile")
+      .set({
+        Authorization: `Bearer ${token}`,
+      });
+    const { id } = resultProfile.body as User;
+    mockUser1.id = id as string;
   });
 
   afterAll(async () => {
-    // await connection.dropDatabase();
-    // await connection.close();
+    await connection.dropDatabase();
+    await connection.close();
   });
 
   it("Should be able to make a transference between two users", async () => {
@@ -83,7 +94,6 @@ describe("MakeTransferenceController", () => {
       });
     const { id } = resultProfile.body as User;
     mockUser2.id = id as string;
-    console.log("id", mockUser2.id);
 
     await request(app)
       .post(`/api/v1/statements/transfers/${mockUser2.id}`)
@@ -104,5 +114,35 @@ describe("MakeTransferenceController", () => {
     const { balance, statement } = statementResult.body as IBalanceResult;
     expect(balance).toBe(amount);
     expect(statement).toHaveLength(1);
+  });
+
+  it("Should not be able to make a transference with sender equals to receiver", async () => {
+    const { token } = responseToken;
+    const amount = 20;
+
+    await request(app)
+      .post("/api/v1/statements/deposit")
+      .send({
+        amount,
+        description: "Funds",
+      })
+      .set({
+        Authorization: `Bearer ${token}`,
+      });
+
+    const result = await request(app)
+      .post(`/api/v1/statements/transfers/${mockUser1.id}`)
+      .send({
+        amount,
+        description: "Test",
+      })
+      .set({
+        Authorization: `Bearer ${token}`,
+      });
+
+    const error = new MakeTransferenceError.SenderEqualsToReceiver();
+
+    expect(result.body).toHaveProperty("message");
+    expect(result.body.message).toEqual(error.message);
   });
 });

@@ -29,7 +29,7 @@ class MakeTransferenceUseCase {
     description,
   }: IRequest): Promise<void> {
     if (sender_id === receiver_id) {
-      throw new MakeTransferenceError.SendEqualsToReceiver();
+      throw new MakeTransferenceError.SenderEqualsToReceiver();
     }
 
     const receiver = await this.usersRepository.findById(receiver_id);

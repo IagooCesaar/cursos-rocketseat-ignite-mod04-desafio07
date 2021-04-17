@@ -94,6 +94,6 @@ describe("MakeTransferenceUseCase", () => {
         sender_id: user1.id as string,
         receiver_id: user1.id as string,
       })
-    ).rejects.toBeInstanceOf(MakeTransferenceError.SendEqualsToReceiver);
+    ).rejects.toBeInstanceOf(MakeTransferenceError.SenderEqualsToReceiver);
   });
 });

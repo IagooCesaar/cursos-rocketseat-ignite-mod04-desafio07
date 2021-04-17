@@ -15,7 +15,7 @@ export namespace MakeTransferenceError {
     }
   }
 
-  export class SendEqualsToReceiver extends AppError {
+  export class SenderEqualsToReceiver extends AppError {
     constructor() {
       super("Operation invalid");
     }
