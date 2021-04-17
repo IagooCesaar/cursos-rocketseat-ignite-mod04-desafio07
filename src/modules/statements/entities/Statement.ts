@@ -3,49 +3,47 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
-  OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn
-} from 'typeorm';
-import { v4 as uuid } from 'uuid';
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { v4 as uuid } from "uuid";
 
-import { User } from '../../users/entities/User';
+import { User } from "../../users/entities/User";
 
 export enum OperationType {
-  DEPOSIT = 'deposit',
-  WITHDRAW = 'withdraw',
-  TRANSFER_IN = 'transfer_in',
-  TRANSFER_OUT = 'transfer_out'
+  DEPOSIT = "deposit",
+  WITHDRAW = "withdraw",
+  TRANSFER_IN = "transfer_in",
+  TRANSFER_OUT = "transfer_out",
 }
 
-@Entity('statements')
+@Entity("statements")
 export class Statement {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id?: string;
 
-  @Column('uuid')
+  @Column("uuid")
   user_id: string;
 
-  @ManyToOne(() => User, user => user.statement)
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, (user) => user.statement)
+  @JoinColumn({ name: "user_id" })
   user: User;
 
   @Column()
   description: string;
 
-  @Column('decimal', { precision: 5, scale: 2 })
+  @Column("decimal", { precision: 5, scale: 2 })
   amount: number;
 
-  @Column({ type: 'enum', enum: OperationType })
+  @Column({ type: "enum", enum: OperationType })
   type: OperationType;
 
-  @Column('uuid')
+  @Column("uuid")
   transfer_id?: string;
 
-  @OneToOne(() => Statement, statement => statement.id)
-  @JoinColumn({ name: "transfer_id"})
+  @OneToOne(() => Statement, (statement) => statement.id)
+  @JoinColumn({ name: "transfer_id" })
   transfer: Statement;
 
   @CreateDateColumn()
