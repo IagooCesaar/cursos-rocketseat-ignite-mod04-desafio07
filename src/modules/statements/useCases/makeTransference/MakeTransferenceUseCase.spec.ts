@@ -76,4 +76,24 @@ describe("MakeTransferenceUseCase", () => {
       })
     ).rejects.toBeInstanceOf(MakeTransferenceError.InsufficientFunds);
   });
+
+  it("Should not be able to make a transference with sender equals to receiver", async () => {
+    const user1 = await usersRepository.create(mockUser1);
+
+    await statementsRepository.create({
+      amount: 10,
+      description: "Funds",
+      type: OperationType.DEPOSIT,
+      user_id: user1.id as string,
+    });
+
+    await expect(
+      makeTransferenceUseCase.execute({
+        amount: 10,
+        description: "Test",
+        sender_id: user1.id as string,
+        receiver_id: user1.id as string,
+      })
+    ).rejects.toBeInstanceOf(MakeTransferenceError.SendEqualsToReceiver);
+  });
 });
