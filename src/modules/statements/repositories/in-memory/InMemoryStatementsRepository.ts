@@ -45,10 +45,10 @@ export class InMemoryStatementsRepository implements IStatementsRepository {
     );
 
     const balance = statement.reduce((acc, operation) => {
-      if (operation.type === "deposit") {
-        return acc + operation.amount;
+      if (operation.type === "deposit" || operation.type === "transfer_in") {
+        return acc + Number(operation.amount);
       }
-      return acc - operation.amount;
+      return acc - Number(operation.amount);
     }, 0);
 
     if (with_statement) {
