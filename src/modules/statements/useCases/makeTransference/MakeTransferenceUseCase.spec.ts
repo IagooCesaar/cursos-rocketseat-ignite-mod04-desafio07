@@ -1,7 +1,7 @@
 import { InMemoryUsersRepository } from "../../../users/repositories/in-memory/InMemoryUsersRepository";
 import { OperationType } from "../../entities/Statement";
 import { InMemoryStatementsRepository } from "../../repositories/in-memory/InMemoryStatementsRepository";
-import { StatementsRepository } from "../../repositories/StatementsRepository";
+import { MakeTransferenceError } from "./MakeTransferenceError";
 import { MakeTransferenceUseCase } from "./MakeTransferenceUseCase";
 
 let makeTransferenceUseCase: MakeTransferenceUseCase;
@@ -36,7 +36,7 @@ describe("MakeTransferenceUseCase", () => {
 
     await statementsRepository.create({
       amount: 10,
-      description: "Founds",
+      description: "Funds",
       type: OperationType.DEPOSIT,
       user_id: user1.id as string,
     });
@@ -53,8 +53,27 @@ describe("MakeTransferenceUseCase", () => {
       with_statement: false,
     });
 
-    console.log(balance);
-
     expect(balance).toBe(10);
+  });
+
+  it("Should not be able to make a transference between two users with insufficient funds", async () => {
+    const user1 = await usersRepository.create(mockUser1);
+    const user2 = await usersRepository.create(mockUser2);
+
+    await statementsRepository.create({
+      amount: 10,
+      description: "Funds",
+      type: OperationType.DEPOSIT,
+      user_id: user1.id as string,
+    });
+
+    await expect(
+      makeTransferenceUseCase.execute({
+        amount: 15,
+        description: "Test",
+        sender_id: user1.id as string,
+        receiver_id: user2.id as string,
+      })
+    ).rejects.toBeInstanceOf(MakeTransferenceError.InsufficientFunds);
   });
 });
